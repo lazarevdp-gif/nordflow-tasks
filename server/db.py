@@ -26,24 +26,24 @@ def verify_password(password, stored_hash):
 
 def init_db():
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-    if os.path.exists(DB_PATH):
-        os.remove(DB_PATH)
+    db_exists = os.path.exists(DB_PATH)
     conn = get_db()
     c = conn.cursor()
 
-    c.executescript('''
-    CREATE TABLE users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT UNIQUE NOT NULL,
-        password_hash TEXT NOT NULL,
-        first_name TEXT NOT NULL,
-        last_name TEXT NOT NULL,
-        position TEXT,
-        photo TEXT,
-        role TEXT DEFAULT 'employee',
-        theme TEXT DEFAULT 'light',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+    if not db_exists:
+        c.executescript('''
+        CREATE TABLE users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            first_name TEXT NOT NULL,
+            last_name TEXT NOT NULL,
+            position TEXT,
+            photo TEXT,
+            role TEXT DEFAULT 'employee',
+            theme TEXT DEFAULT 'light',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
     CREATE TABLE projects (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -108,7 +108,8 @@ def init_db():
     );
     ''')
     conn.commit()
-    _seed_demo_data(conn)
+    if not db_exists:
+        _seed_demo_data(conn)
     conn.close()
 
 def _seed_demo_data(conn):
