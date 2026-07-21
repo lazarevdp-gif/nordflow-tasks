@@ -896,8 +896,7 @@ def set_security_headers(response):
     return response
 
 
-init_db()
-
 if __name__ == '__main__':
+    init_db()
     print("NordFlow Tasks server running at http://localhost:5000")
     app.run(debug=False, host='0.0.0.0', port=5000)

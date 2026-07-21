@@ -1,1 +1,1 @@
-web: cd server && gunicorn app:app --bind 0.0.0.0:$PORT
+web: cd server && python -c "from db import init_db; init_db()" && gunicorn app:app --bind 0.0.0.0:$PORT --workers 1
