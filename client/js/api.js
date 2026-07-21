@@ -1,11 +1,13 @@
+const API_BASE = window.API_BASE_URL || '';
 const API = {
   async request(method, url, data = null) {
+    const fullUrl = API_BASE + url;
     const opts = { method, credentials: 'include', headers: {} };
     if (data && method !== 'GET') {
       opts.headers['Content-Type'] = 'application/json';
       opts.body = JSON.stringify(data);
     }
-    const res = await fetch(url, opts);
+    const res = await fetch(fullUrl, opts);
     const json = await res.json();
     if (!res.ok) throw json;
     return json;
@@ -58,13 +60,13 @@ const API = {
     const fd = new FormData();
     fd.append('file', file);
     fd.append('task_id', taskId);
-    return fetch('/api/upload', { method: 'POST', credentials: 'include', body: fd })
+    return fetch(API_BASE + '/api/upload', { method: 'POST', credentials: 'include', body: fd })
       .then(async r => { const j = await r.json(); if (!r.ok) throw j; return j; });
   },
   uploadAvatar(file) {
     const fd = new FormData();
     fd.append('file', file);
-    return fetch('/api/upload/avatar', { method: 'POST', credentials: 'include', body: fd })
+    return fetch(API_BASE + '/api/upload/avatar', { method: 'POST', credentials: 'include', body: fd })
       .then(async r => { const j = await r.json(); if (!r.ok) throw j; return j; });
   }
 };
